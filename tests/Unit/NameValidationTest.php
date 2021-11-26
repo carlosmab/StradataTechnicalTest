@@ -104,23 +104,5 @@ class NameValidationTest extends TestCase
     }
 
 
-        /**
-     * @test
-     *
-     * Testing if method return the match rate for each match name
-     *
-     * @return void
-     */
-    public function method_can_return_matching_rate()
-    {
-        $name = "Jorge Rodriguez";
-        $matchRate = 100;
-
-        PublicPerson::factory()->create(['name' => $name]);
-
-        $matchingPerson = PublicPerson::getMatchingNames($name, $matchRate)->first();
-
-        $this->assertEquals(100, $matchingPerson->matchRate);
-
-    }
+    
 }

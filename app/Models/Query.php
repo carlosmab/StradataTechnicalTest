@@ -9,8 +9,10 @@ class Query extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function results()
     {
-        return $this->belongsToMany(PublicPerson::class);
+        return $this->belongsToMany(PublicPerson::class)->withPivot('match_rate');
     }
 }

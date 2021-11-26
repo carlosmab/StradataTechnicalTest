@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\QueryResource;
 use App\Models\PublicPerson;
 use App\Models\Query;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Uuid;
 
 class NameValidationController extends Controller
 {
@@ -18,10 +20,14 @@ class NameValidationController extends Controller
 
     public function index()
     {
-        $name = request('name');
+        $name = request('searched_name');
         $matchRate = request( 'match_rate');
 
-        $query = Query::create($this->validateData());
+        $uuid = Uuid::uuid4();
+        $queryData = $this->validateData();
+        $queryData['uuid'] = $uuid->toString();;
+
+        $query = Query::create($queryData);
 
         try {
 
@@ -30,26 +36,25 @@ class NameValidationController extends Controller
             if ($people->count() > 0) {
 
                 $query['execution_status'] = 'Registros encontrados';
+
                 foreach($people as $person) {
-                    $query->results()->attach($person, ['match_rate' => $person->matchRate]);
+                    $query->results()->attach($person, ['match_rate' => $person->matchRate ]);
                 }
 
-            } else {
-                $query['execution_status'] = 'Sin coincidencias';
             }
 
         } catch (\Throwable $th) {
             $query['execution_status'] = 'Error del sistema';
         }
 
-        return
+        return new QueryResource($query);
     }
 
     private function validateData()
     {
         return request()->validate([
-            'name' => 'required',
+            'searched_name' => 'required',
             'match_rate' => 'required'
-        ])
+        ]);
     }
 }

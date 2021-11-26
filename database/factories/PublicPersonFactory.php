@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class PublicPersonFactory extends Factory
 {
@@ -14,6 +15,7 @@ class PublicPersonFactory extends Factory
     public function definition()
     {
         return [
+            'uuid' => Str::uuid()->toString(),
             'region' => $this->faker->sentence(2),
             'location' =>  $this->faker->sentence(2),
             'city' =>  $this->faker->sentence(2),

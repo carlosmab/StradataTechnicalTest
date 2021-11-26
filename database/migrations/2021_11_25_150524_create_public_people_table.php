@@ -15,6 +15,7 @@ class CreatePublicPeopleTable extends Migration
     {
         Schema::create('public_people', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid');
             $table->string('region');
             $table->string('location');
             $table->string('city');

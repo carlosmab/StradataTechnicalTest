@@ -18,7 +18,7 @@ class CreateQueriesTable extends Migration
             $table->uuid('uuid');
             $table->string('searched_name');
             $table->decimal('match_rate', 7, 4);
-            $table->enum('execution_status', ['Registros encontrados', 'Sin coincidencias', 'Error del sistema']);
+            $table->enum('execution_status', ['Registros encontrados', 'Sin coincidencias', 'Error del sistema'])->default('Sin coincidencias');
             $table->timestamps();
         });
     }
