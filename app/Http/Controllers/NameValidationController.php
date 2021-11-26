@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use App\Http\Resources\QueryResource;
 use App\Models\PublicPerson;
 use App\Models\Query;

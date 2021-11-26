@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JwtAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NameValidationController;
@@ -19,5 +20,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('login', [JwtAuthController::class, 'login']);
+Route::post('register', [JwtAuthController::class, 'register']);
 
-Route::post("/validate", [NameValidationController::class, 'index']);
+Route::group(['middleware' => ['jwt.verify']], function() {
+    // Route::get('logout', [ApiController::class, 'logout']);
+
+    Route::post("/validate", [NameValidationController::class, 'index']);
+
+});
+
+
+
