@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSearchResultPublicPeopleTable extends Migration
+class CreateQueriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateSearchResultPublicPeopleTable extends Migration
      */
     public function up()
     {
-        Schema::create('search_results_public_people', function (Blueprint $table) {
+        Schema::create('queries', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('search_result_id');
-            $table->unsignedBigInteger('public_person_id');
-            $table->decimal('match_rate', 6, 4);
+            $table->uuid('uuid');
+            $table->string('searched_name');
+            $table->decimal('match_rate', 7, 4);
+            $table->enum('execution_status', ['Registros encontrados', 'Sin coincidencias', 'Error del sistema']);
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateSearchResultPublicPeopleTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('search_result_public_people');
+        Schema::dropIfExists('queries');
     }
 }
