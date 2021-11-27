@@ -1,2 +1,2 @@
-# StrdataTechnicalTest
+# StradataTechnicalTest
  
