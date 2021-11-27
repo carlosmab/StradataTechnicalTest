@@ -31,6 +31,10 @@ export default {
         InputField
     },
 
+    created() {
+        this.title = this.$route.meta.title;
+    },
+
     data: function() {
         return {
             form: {
@@ -42,20 +46,18 @@ export default {
     },
 
     methods: {
-        async login () {
-            try {
-                await auth.login(this.form)
-                    .then(response => {
-                        console.log(response);
-                        this.$router.push('/');
-                    }).catch(errors => {
-                        this.errors = errors.response.data.error
-                    })
-            }
+        login: function () {
+            auth.login(this.form)
+                .then(response => {
+                    this.$localStorage.set('token',  response.data.token);
+                    this.$router.push('/');
 
+                }).catch(errors => {
+                    this.errors = errors.response.data.error
+                    this.$localStorage.remove('token');
+                })
         }
     }
-
 
 }
 </script>

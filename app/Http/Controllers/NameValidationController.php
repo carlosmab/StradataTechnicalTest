@@ -54,7 +54,7 @@ class NameValidationController extends Controller
     private function validateData()
     {
         return request()->validate([
-            'searched_name' => 'required',
+            'searched_name' => 'required|string',
             'match_rate' => 'required'
         ]);
     }

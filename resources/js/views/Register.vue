@@ -45,6 +45,10 @@ export default {
         }
     },
 
+    created() {
+        this.title = this.$route.meta.title;
+    },
+
     methods: {
         register: function () {
             auth.register(this.form)
