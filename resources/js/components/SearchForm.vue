@@ -15,6 +15,9 @@
             </div>
 
         </form>
+        <div v-if="noResults">
+            <p class="text-gray-700 text-bold p-10">No se encontraron resultados</p>
+        </div>
 
     </div>
 </template>
@@ -37,6 +40,7 @@
                 },
                 errors: [],
                 matchingNames: [],
+                noResults: false,
             }
         },
 
@@ -53,7 +57,11 @@
                 axios.post('/api/validate', this.form, config)
                     .then(response => {
                         this.$emit('updateMatchingNamesTable', response.data.data.results)
-                        console.log(response.data.data.results);
+                        if (response.data.data.results.length == 0) {
+                            this.noResults = true;
+                        } else {
+                            this.noResults = false;
+                        }
                     }).catch (error => {
                         this.errors = error.response.data.errors;
                     });

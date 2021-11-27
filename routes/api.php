@@ -4,6 +4,7 @@ use App\Http\Controllers\JwtAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NameValidationController;
+use App\Http\Controllers\QueryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,10 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
     Route::post("/validate", [NameValidationController::class, 'index']);
 
+    Route::get("/logs/{uuid}", [QueryController::class, 'show']);
 });
+
+
 
 
 

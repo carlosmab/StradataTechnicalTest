@@ -2,21 +2,18 @@
     <div>
         <div v-if="searchMatchNames">
             <SearchForm @updateMatchingNamesTable="updateResultsTable($event)" />
-            <hr>
-            <ResultsTable :results="matchingNames" :firstSearch="firstSearch"/>
         </div>
         <div v-else>
-            <LogSearchForm @updateLogsTable="updateLogsTable($event)" />
-            <hr>
-            <LogTable :logs="logs" />
+            <LogSearchForm @updateMatchingNamesTable="updateResultsTable($event)" />
         </div>
+        <hr>
+        <ResultsTable :results="matchingNames" :firstSearch="firstSearch"/>
     </div>
 </template>
 
 <script>
     import SearchForm from "./SearchForm.vue";
     import ResultsTable from "./ResultsTable.vue";
-    import LogTable from "./LogTable.vue";
     import LogSearchForm from "./LogSearchForm.vue";
 
     export default {
@@ -31,14 +28,12 @@
             SearchForm,
             ResultsTable,
             LogSearchForm,
-            LogTable,
         },
 
         data: function () {
             return {
                 matchingNames: [],
                 firstSearch: true,
-                logs: []
             }
         },
 
@@ -47,10 +42,18 @@
                 this.matchingNames = matchingNames;
             },
 
-             updateResultsTable: function (logs) {
-                this.logs = logs;
+            updatesTable: function (matchingNames) {
+                this.matchingNames = matchingNames;
+            }
+        },
+
+         watch: {
+            searchMatchNames: function (newView) {
+                this.matchingNames = [];
             }
         }
+
+
 
     }
 </script>

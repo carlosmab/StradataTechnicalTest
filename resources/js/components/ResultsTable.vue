@@ -1,8 +1,8 @@
 <template>
     <div v-if="resultsPerPage.length > 0" class="ml-10 mr-10 mt-15" >
         <div class="flex justify-end mt-10">
-            <button @click="previousPage()" :disabled="prevPageDisabled" class="p-2 bg-green-500 text-white w-32 rounded hover:bg-green-600">Anterior</button>
-            <button @click="nextPage()" :disabled="nextPageDisabled" class="ml-5 p-2 bg-green-500 text-white w-32 rounded hover:bg-green-600">Siguiente</button>
+            <button @click="previousPage()" class="p-2 bg-green-500 text-white w-32 rounded hover:bg-green-600">Anterior</button>
+            <button @click="nextPage()" class="ml-5 p-2 bg-green-500 text-white w-32 rounded hover:bg-green-600">Siguiente</button>
         </div>
         <table class="w-full mt-10">
             <thead class="bg-green-500 text-white">

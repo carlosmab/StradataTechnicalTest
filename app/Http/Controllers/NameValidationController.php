@@ -37,6 +37,7 @@ class NameValidationController extends Controller
             if ($people->count() > 0) {
 
                 $query['execution_status'] = 'Registros encontrados';
+                $query->save();
 
                 foreach($people as $person) {
                     $query->results()->attach($person, ['match_rate' => $person->matchRate ]);

@@ -2289,6 +2289,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "SearchForm",
@@ -2301,7 +2317,11 @@ __webpack_require__.r(__webpack_exports__);
         uuid: ''
       },
       errors: [],
-      logs: []
+      founded: false,
+      searched_name: "",
+      match_rate: "",
+      execution_status: "",
+      hasErrors: false
     };
   },
   methods: {
@@ -2314,102 +2334,33 @@ __webpack_require__.r(__webpack_exports__);
           Authorization: "Bearer ".concat(token)
         }
       };
-      axios.post('/api/logs', this.form, config).then(function (response) {
-        _this.$emit('updateLogsTable', response.data.data);
+      axios.get('/api/logs/' + this.form.uuid, config).then(function (response) {
+        try {
+          _this.founded = true;
+          _this.hasErrors = false;
+          _this.searched_name = response.data.data.searched_name;
+          _this.match_rate = response.data.data.match_rate;
+          _this.execution_status = response.data.data.execution_status;
 
-        console.log(response.data.data);
+          _this.$emit('updateMatchingNamesTable', response.data.data.results);
+        } catch (_unused) {
+          _this.founded = false;
+          _this.hasErrors = true;
+          _this.searched_name = "";
+          _this.match_rate = "";
+          _this.execution_status = "";
+
+          _this.$emit('updateMatchingNamesTable', []);
+        }
       })["catch"](function (error) {
-        _this.errors = error.response.data.errors;
+        _this.founded = false;
+        _this.hasErrors = true;
+        _this.searched_name = "";
+        _this.match_rate = "";
+        _this.execution_status = "";
+
+        _this.$emit('updateMatchingNamesTable', []);
       });
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LogTable.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LogTable.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "logTable",
-  props: ['logs', 'firstSearch'],
-  data: function data() {
-    return {
-      logsPerPage: [],
-      page: 0,
-      num_pages: 0,
-      rows_per_page: 10,
-      prevPageDisabled: false,
-      nextPageDisabled: false
-    };
-  },
-  methods: {
-    previousPage: function previousPage() {
-      this.page = this.page - 1;
-
-      if (this.page < 0) {
-        this.page = 0;
-        this.prevPageDisabled = true;
-      } else {
-        this.prevPageDisabled = false;
-        this.nextPageDisabled = false;
-      }
-
-      this.logsPerPage = this.logs.slice(this.rows_per_page * this.page, this.rows_per_page * (this.page + 1));
-    },
-    nextPage: function nextPage() {
-      this.page = this.page + 1;
-
-      if (this.page > this.num_pages) {
-        this.page = this.num_pages;
-        this.nextPageDisabled = true;
-      } else {
-        this.nextPageDisabled = false;
-        this.prevPageDisabled = false;
-      }
-
-      this.logsPerPage = this.logs.slice(this.rows_per_page * this.page, this.rows_per_page * (this.page + 1));
-    }
-  },
-  watch: {
-    logs: function logs(newlogs) {
-      this.num_pages = Math.ceil(newlogs.length / this.rows_per_page) - 1;
-      this.logsPerPage = newlogs.slice(0, this.rows_per_page);
     }
   }
 });
@@ -2524,10 +2475,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _SearchForm_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SearchForm.vue */ "./resources/js/components/SearchForm.vue");
 /* harmony import */ var _ResultsTable_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ResultsTable.vue */ "./resources/js/components/ResultsTable.vue");
-/* harmony import */ var _LogTable_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./LogTable.vue */ "./resources/js/components/LogTable.vue");
-/* harmony import */ var _LogSearchForm_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./LogSearchForm.vue */ "./resources/js/components/LogSearchForm.vue");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+/* harmony import */ var _LogSearchForm_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./LogSearchForm.vue */ "./resources/js/components/LogSearchForm.vue");
 //
 //
 //
@@ -2541,9 +2489,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-
 
 
 
@@ -2553,23 +2498,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   components: {
     SearchForm: _SearchForm_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     ResultsTable: _ResultsTable_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
-    LogSearchForm: _LogSearchForm_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    LogTable: _LogTable_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+    LogSearchForm: _LogSearchForm_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function data() {
     return {
       matchingNames: [],
-      firstSearch: true,
-      logs: []
+      firstSearch: true
     };
   },
-  methods: _defineProperty({
+  methods: {
     updateResultsTable: function updateResultsTable(matchingNames) {
       this.matchingNames = matchingNames;
+    },
+    updatesTable: function updatesTable(matchingNames) {
+      this.matchingNames = matchingNames;
     }
-  }, "updateResultsTable", function updateResultsTable(logs) {
-    this.logs = logs;
-  })
+  },
+  watch: {
+    searchMatchNames: function searchMatchNames(newView) {
+      this.matchingNames = [];
+    }
+  }
 });
 
 /***/ }),
@@ -2607,6 +2556,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "SearchForm",
@@ -2620,7 +2572,8 @@ __webpack_require__.r(__webpack_exports__);
         match_rate: 0
       },
       errors: [],
-      matchingNames: []
+      matchingNames: [],
+      noResults: false
     };
   },
   methods: {
@@ -2636,7 +2589,11 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/api/validate', this.form, config).then(function (response) {
         _this.$emit('updateMatchingNamesTable', response.data.data.results);
 
-        console.log(response.data.data.results);
+        if (response.data.data.results.length == 0) {
+          _this.noResults = true;
+        } else {
+          _this.noResults = false;
+        }
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
       });
@@ -2725,7 +2682,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       title: '',
-      searchMatchNames: false
+      searchMatchNames: true
     };
   },
   watch: {
@@ -34643,45 +34600,6 @@ component.options.__file = "resources/js/components/LogSearchForm.vue"
 
 /***/ }),
 
-/***/ "./resources/js/components/LogTable.vue":
-/*!**********************************************!*\
-  !*** ./resources/js/components/LogTable.vue ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _LogTable_vue_vue_type_template_id_32c2a355___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LogTable.vue?vue&type=template&id=32c2a355& */ "./resources/js/components/LogTable.vue?vue&type=template&id=32c2a355&");
-/* harmony import */ var _LogTable_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LogTable.vue?vue&type=script&lang=js& */ "./resources/js/components/LogTable.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _LogTable_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _LogTable_vue_vue_type_template_id_32c2a355___WEBPACK_IMPORTED_MODULE_0__.render,
-  _LogTable_vue_vue_type_template_id_32c2a355___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/LogTable.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
 /***/ "./resources/js/components/ResultsTable.vue":
 /*!**************************************************!*\
   !*** ./resources/js/components/ResultsTable.vue ***!
@@ -34996,22 +34914,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/LogTable.vue?vue&type=script&lang=js&":
-/*!***********************************************************************!*\
-  !*** ./resources/js/components/LogTable.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LogTable_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LogTable.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LogTable.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LogTable_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
 /***/ "./resources/js/components/ResultsTable.vue?vue&type=script&lang=js&":
 /*!***************************************************************************!*\
   !*** ./resources/js/components/ResultsTable.vue?vue&type=script&lang=js& ***!
@@ -35215,23 +35117,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LogSearchForm_vue_vue_type_template_id_4ee63095___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LogSearchForm_vue_vue_type_template_id_4ee63095___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LogSearchForm.vue?vue&type=template&id=4ee63095& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LogSearchForm.vue?vue&type=template&id=4ee63095&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/LogTable.vue?vue&type=template&id=32c2a355&":
-/*!*****************************************************************************!*\
-  !*** ./resources/js/components/LogTable.vue?vue&type=template&id=32c2a355& ***!
-  \*****************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LogTable_vue_vue_type_template_id_32c2a355___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LogTable_vue_vue_type_template_id_32c2a355___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LogTable_vue_vue_type_template_id_32c2a355___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LogTable.vue?vue&type=template&id=32c2a355& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LogTable.vue?vue&type=template&id=32c2a355&");
 
 
 /***/ }),
@@ -35766,6 +35651,42 @@ var render = function () {
         _vm._m(0),
       ]
     ),
+    _vm._v(" "),
+    _vm.founded
+      ? _c("div", { staticClass: "mt-10 ml-10" }, [
+          _c("div", [
+            _c("h2", { staticClass: "text-bold uppercase text-green-500" }, [
+              _vm._v("Nombre Buscado"),
+            ]),
+            _vm._v(" "),
+            _c("p", [_vm._v(_vm._s(_vm.searched_name))]),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "mt-3" }, [
+            _c("h2", { staticClass: "text-bold uppercase text-green-500" }, [
+              _vm._v("% Coincidencia"),
+            ]),
+            _vm._v(" "),
+            _c("p", [_vm._v(_vm._s(_vm.match_rate))]),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "mt-3 mb-10" }, [
+            _c("h2", { staticClass: "text-bold uppercase text-green-500" }, [
+              _vm._v("Estado de la Ejecución"),
+            ]),
+            _vm._v(" "),
+            _c("p", [_vm._v(_vm._s(_vm.execution_status))]),
+          ]),
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.hasErrors
+      ? _c("div", [
+          _c("p", { staticClass: "text-red-700 text-bold p-10" }, [
+            _vm._v("El texto ingresado no corresponde a ningún UUID"),
+          ]),
+        ])
+      : _vm._e(),
   ])
 }
 var staticRenderFns = [
@@ -35782,104 +35703,6 @@ var staticRenderFns = [
         },
         [_vm._v("Buscar")]
       ),
-    ])
-  },
-]
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LogTable.vue?vue&type=template&id=32c2a355&":
-/*!********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LogTable.vue?vue&type=template&id=32c2a355& ***!
-  \********************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _vm.logsPerPage.length > 0
-    ? _c("div", { staticClass: "ml-10 mr-10 mt-15" }, [
-        _c("div", { staticClass: "flex justify-end mt-10" }, [
-          _c(
-            "button",
-            {
-              staticClass:
-                "p-2 bg-green-500 text-white w-32 rounded hover:bg-green-600",
-              attrs: { disabled: _vm.prevPageDisabled },
-              on: {
-                click: function ($event) {
-                  return _vm.previousPage()
-                },
-              },
-            },
-            [_vm._v("Anterior")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass:
-                "ml-5 p-2 bg-green-500 text-white w-32 rounded hover:bg-green-600",
-              attrs: { disabled: _vm.nextPageDisabled },
-              on: {
-                click: function ($event) {
-                  return _vm.nextPage()
-                },
-              },
-            },
-            [_vm._v("Siguiente")]
-          ),
-        ]),
-        _vm._v(" "),
-        _c("table", { staticClass: "w-full mt-10" }, [
-          _vm._m(0),
-          _vm._v(" "),
-          _c(
-            "tbody",
-            _vm._l(_vm.logsPerPage, function (log, index) {
-              return _c(
-                "tr",
-                { key: index, class: { "bg-green-100": index % 2 == 0 } },
-                [
-                  _c("td", [_vm._v(" " + _vm._s(log.searched_name) + " ")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(" " + _vm._s(log.match_rate) + " ")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(" " + _vm._s(log.execution_status) + " ")]),
-                ]
-              )
-            }),
-            0
-          ),
-        ]),
-      ])
-    : !_vm.firstSearch
-    ? _c("div", { staticClass: "ml-10 mr-10 mt-10" }, [
-        _c("p", [_vm._v("No se encontraron resultados")]),
-      ])
-    : _vm._e()
-}
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", { staticClass: "bg-green-500 text-white" }, [
-      _c("th", [_vm._v("Nombre buscado")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("% Buscado")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Estado de Ejecución")]),
     ])
   },
 ]
@@ -35913,7 +35736,6 @@ var render = function () {
             {
               staticClass:
                 "p-2 bg-green-500 text-white w-32 rounded hover:bg-green-600",
-              attrs: { disabled: _vm.prevPageDisabled },
               on: {
                 click: function ($event) {
                   return _vm.previousPage()
@@ -35928,7 +35750,6 @@ var render = function () {
             {
               staticClass:
                 "ml-5 p-2 bg-green-500 text-white w-32 rounded hover:bg-green-600",
-              attrs: { disabled: _vm.nextPageDisabled },
               on: {
                 click: function ($event) {
                   return _vm.nextPage()
@@ -36015,48 +35836,45 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _vm.searchMatchNames
-      ? _c(
-          "div",
-          [
-            _c("SearchForm", {
-              on: {
-                updateMatchingNamesTable: function ($event) {
-                  return _vm.updateResultsTable($event)
+  return _c(
+    "div",
+    [
+      _vm.searchMatchNames
+        ? _c(
+            "div",
+            [
+              _c("SearchForm", {
+                on: {
+                  updateMatchingNamesTable: function ($event) {
+                    return _vm.updateResultsTable($event)
+                  },
                 },
-              },
-            }),
-            _vm._v(" "),
-            _c("hr"),
-            _vm._v(" "),
-            _c("ResultsTable", {
-              attrs: {
-                results: _vm.matchingNames,
-                firstSearch: _vm.firstSearch,
-              },
-            }),
-          ],
-          1
-        )
-      : _c(
-          "div",
-          [
-            _c("LogSearchForm", {
-              on: {
-                updateLogsTable: function ($event) {
-                  return _vm.updateLogsTable($event)
+              }),
+            ],
+            1
+          )
+        : _c(
+            "div",
+            [
+              _c("LogSearchForm", {
+                on: {
+                  updateMatchingNamesTable: function ($event) {
+                    return _vm.updateResultsTable($event)
+                  },
                 },
-              },
-            }),
-            _vm._v(" "),
-            _c("hr"),
-            _vm._v(" "),
-            _c("LogTable", { attrs: { logs: _vm.logs } }),
-          ],
-          1
-        ),
-  ])
+              }),
+            ],
+            1
+          ),
+      _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
+      _c("ResultsTable", {
+        attrs: { results: _vm.matchingNames, firstSearch: _vm.firstSearch },
+      }),
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -36137,6 +35955,14 @@ var render = function () {
         _vm._m(0),
       ]
     ),
+    _vm._v(" "),
+    _vm.noResults
+      ? _c("div", [
+          _c("p", { staticClass: "text-gray-700 text-bold p-10" }, [
+            _vm._v("No se encontraron resultados"),
+          ]),
+        ])
+      : _vm._e(),
   ])
 }
 var staticRenderFns = [

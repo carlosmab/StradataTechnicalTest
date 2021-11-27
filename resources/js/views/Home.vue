@@ -71,7 +71,7 @@
         data: function () {
             return {
                 title: '',
-                searchMatchNames: false,
+                searchMatchNames: true,
             }
         },
 

@@ -14,19 +14,22 @@ use function PHPUnit\Framework\assertJson;
 
 class LogTest extends TestCase
 {
+
+    use RefreshDatabase;
+
     /**
      * @test
      *
      * @return void
      */
-    public function queries_can_be_fetched_by_user()
+    public function query_can_be_fetched_by_uuid()
     {
         $this->withoutExceptionHandling();
 
         $user = User::factory()->create(['password' =>  bcrypt('12345678')]);
-        $response = $this->post('/api/login', ['email' => $user->email, 'password' => '12345678' ]);
-        $token = $response['token'];
+        $res = $this->post('/api/login', ['email' => $user->email, 'password' => '12345678' ]);
 
+        $token = $res['token'];
 
         $name = "Jorge Rodriguez";
         $matchRate = 100;
@@ -39,10 +42,12 @@ class LogTest extends TestCase
 
         $response = $this->get("/api/logs/" . $query->uuid, ['HTTP_Authorization' => 'Bearer '.$token]);
 
-        $response.assertCount(1)
-            .assertJson()
-
-
-
+        $response->assertJson([
+                'data' => [
+                    'uuid' => $query->uuid,
+                    'searched_name' => $name,
+                    'match_rate' => $matchRate
+                ]
+            ]);
     }
 }
